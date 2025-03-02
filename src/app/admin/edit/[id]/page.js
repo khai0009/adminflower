@@ -51,7 +51,7 @@ export default function EditFlower({ params }) {
               price: parseFloat(flower.price),
               quantily: parseInt(flower.quantily)
             });
-            router.push("/");
+            router.push("/admin/index");
           } catch (error) {
             console.error("Error updating flower:", error);
           }

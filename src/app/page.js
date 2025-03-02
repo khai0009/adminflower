@@ -1,99 +1,60 @@
-"use client";
+"use client"
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 
-import { useState, useEffect } from "react";
-import { collection, getDocs, deleteDoc, doc } from "firebase/firestore";
-import { db } from "./Firebase"; // Assuming this exists
-import Link from "next/link";
-import { CldImage } from 'next-cloudinary';
+export default function AdminLogin() {
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const router = useRouter();
 
-export default function AdminPage() {
-  const [flowers, setFlowers] = useState([]);
-  const [searchTerm, setSearchTerm] = useState("");
+  const handleLogin = async (e) => {
+    e.preventDefault();
 
-  useEffect(() => {
-    const fetchFlowers = async () => {
-      const flowersCollection = collection(db, "Flower");
-      const flowersSnapshot = await getDocs(flowersCollection);
-      const flowersList = flowersSnapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      }));
-      setFlowers(flowersList);
-    };
-    fetchFlowers();
-  }, []);
-
-  const handleDelete = async (id) => {
-    if (confirm("Are you sure you want to delete this flower?")) {
-      await deleteDoc(doc(db, "Flower", id));
-      setFlowers(flowers.filter(flower => flower.id !== id));
+    if (username === 'admin' && password === 'password') {
+      router.push('/admin/index');
+    } else {
+      setError('Invalid username or password');
     }
   };
 
-  const filteredFlowers = flowers.filter(flower =>
-    flower.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">Flower Admin Panel</h1>
-      
-      <div className="flex justify-between mb-4">
-        <input
-          type="text"
-          placeholder="Search flowers..."
-          className="border p-2 rounded"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
-        <Link href="/admin/create" className="bg-blue-500 text-white px-4 py-2 rounded">
-          Create New Flower
-        </Link>
-      </div>
-
-      <div className="overflow-x-auto">
-        <table className="min-w-full border">
-          <thead className="bg-gray-100">
-            <tr>
-              <th className="p-2">Image</th>
-              <th className="p-2">Name</th>
-              <th className="p-2">Description</th>
-              <th className="p-2">Price</th>
-              <th className="p-2">Quantity</th>
-              <th className="p-2">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredFlowers.map(flower => (
-              <tr key={flower.id} className="border-b text-center">
-                <td className="items-center"><CldImage
-      src={flower.imageUrl} // Use this sample image or upload your own via the Media Explorer
-      width="100" // Transform the image: auto-crop to square aspect_ratio
-      height="100"
-      crop={{
-        type: 'auto',
-        
-        source: true
-      }} alt={flower.name}></CldImage></td>
-                <td className="p-2 border-l">{flower.name}</td>
-                <td className="p-2 border-l">{flower.description}</td>
-                <td className="p-2 border-l">{flower.price}.000 đ</td>
-                <td className="p-2 border-l">{flower.Quantily}</td>
-                <td className="p-2 border-l">
-                  <Link href={`/admin/edit/${flower.id}`} className="text-blue-500 mr-2">
-                    Edit
-                  </Link>
-                  <button
-                    onClick={() => handleDelete(flower.id)}
-                    className="text-red-500"
-                  >
-                    Delete
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+    <div className="flex items-center justify-center h-screen bg-gray-100">
+      <div className="bg-white p-8 rounded shadow-md w-96">
+        <h2 className="text-2xl font-semibold mb-4 text-center">Admin Login</h2>
+        {error && <p className="text-red-500 mb-2">{error}</p>}
+        <form onSubmit={handleLogin}>
+          <div className="mb-4">
+            <label htmlFor="username" className="block text-gray-700 text-sm font-bold mb-2">
+              Username:
+            </label>
+            <input
+              type="text"
+              id="username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            />
+          </div>
+          <div className="mb-6">
+            <label htmlFor="password" className="block text-gray-700 text-sm font-bold mb-2">
+              Password:
+            </label>
+            <input
+              type="password"
+              id="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            />
+          </div>
+          <button
+            type="submit"
+            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-full focus:outline-none focus:shadow-outline"
+          >
+            Login
+          </button>
+        </form>
       </div>
     </div>
   );

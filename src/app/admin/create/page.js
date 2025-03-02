@@ -11,7 +11,7 @@ export default function CreateFlower() {
     descripte: "",
     imageUrl: "",
     price: "",
-    quantily: ""
+    quantity: ""
   });
   const router = useRouter();
 
@@ -23,7 +23,7 @@ export default function CreateFlower() {
         price: parseFloat(flower.price),
         quantity: parseInt(flower.quantity)
       });
-      router.push("/");
+      router.push("/admin/index");
     } catch (error) {
       console.error("Error adding flower:", error);
     }
@@ -47,7 +47,7 @@ export default function CreateFlower() {
           <label className="block mb-1">Description</label>
           <textarea
             value={flower.descripte}
-            onChange={(e) => setFlower({...flower, descripte: e.target.value})}
+            onChange={(e) => setFlower({...flower, description: e.target.value})}
             className="w-full border p-2 rounded"
             required
           />
@@ -55,7 +55,7 @@ export default function CreateFlower() {
         <div>
           <label className="block mb-1">Image URL</label>
           <input
-            type="url"
+            
             value={flower.imageUrl}
             onChange={(e) => setFlower({...flower, imageUrl: e.target.value})}
             className="w-full border p-2 rounded"
@@ -78,7 +78,7 @@ export default function CreateFlower() {
           <input
             type="number"
             value={flower.quantily}
-            onChange={(e) => setFlower({...flower, quantily: e.target.value})}
+            onChange={(e) => setFlower({...flower, quantity: e.target.value})}
             className="w-full border p-2 rounded"
             required
           />
